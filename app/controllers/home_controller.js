@@ -18,7 +18,7 @@ home.handleRequest = function(req, res)
 		else
 		{
 			res.writeHead(200, {'Content-Type' : 'text/html'});
-			res.write(haml.render(data, {}));
+			res.write(haml.render(data, options));
 			res.end();
 		}
 	});
