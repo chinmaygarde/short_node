@@ -4,21 +4,38 @@ var db = kiwi.require('redis-client').createClient();
 
 var mapper = exports;
 
-var hashName = 'urls';
+var countHashName = 'count';
+var urlHashName = 'url';
 
-mapper.setShortUrl = function(code, longUrl)
+// Thanks StackOverflow
+mapper.createShortCode = function()
 {
-	db.hset(hashName, code, longUrl, function(err, newValue){
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
+mapper.setShortUrl = function(code, longUrl, success, failure)
+{
+	db.hset(urlHashName, code, longUrl, function(err, newValue){
 		if(err)
 		{
-			sys.puts(err);
+			failure(err);
+		}
+		else
+		{
+			success(code, newValue);
 		}
 	});
 };
 
 mapper.getLongUrl = function(code)
 {
-	db.hget(hashName, code, function(err, newValue){
+	db.hget(urlHashName, code, function(err, newValue){
 		if(err)
 		{
 			sys.puts(err);

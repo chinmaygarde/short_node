@@ -19,17 +19,17 @@ sys.puts("Server is running on port " + port);
 function processUrl(req, res)
 {
 	path = url.parse(req.url).pathname;
-	switch(path.split('/')[1]) // Only get the first part
+	switch(path) // Only get the first part
 	{
-		case '':
+		case '/':
 			home.handleRequest(req, res);
 			break;
-		case 'create':
+		case '/create':
 			url_controller.handleRequest(req, res);
 			break;
 		default:
 			res.writeHeader(404, {});
-			res.write("Not Found");
+			res.write("Not Found " + path);
 			res.end();
 	}
 }
