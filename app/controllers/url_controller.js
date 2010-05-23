@@ -11,8 +11,7 @@ url_controller.handleGetRequest = function(req, res)
 {
 	mapper.getLongUrl(url.parse(req.url).pathname.replace('/',''), 
 		function(longUrl){
-			res.writeHead(200, {'Content-Type' : 'text/html'});
-			res.write(longUrl);
+			res.writeHead(303, {'Location' : longUrl});
 			res.end();	
 		},
 		function(data){
