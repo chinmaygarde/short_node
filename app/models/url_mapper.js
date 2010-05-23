@@ -4,7 +4,9 @@ var db = kiwi.require('redis-client').createClient();
 
 var mapper = exports;
 
-var countHashName = 'count';
+var totalCount = 'count';
+
+var countHashName = 'url_count';
 var urlHashName = 'url';
 
 // Thanks StackOverflow
@@ -28,24 +30,36 @@ mapper.setShortUrl = function(code, longUrl, success, failure)
 		}
 		else
 		{
+			mapper.incrementCount();
 			success(code, newValue);
 		}
 	});
 };
 
-mapper.getLongUrl = function(code)
+mapper.getLongUrl = function(code, success, failure)
 {
 	db.hget(urlHashName, code, function(err, newValue){
 		if(err)
 		{
-			sys.puts(err);
+			failure(err);
+		}
+		else
+		{
+			if(newValue)
+			{
+				success(newValue);				
+			}
+			else
+			{
+				failure("No such value");
+			}
 		}
 	});
 };
 
 mapper.incrementCount = function()
 {
-	db.incr('count', function(err, newValue){
+	db.incr(totalCount, function(err, newValue){
 		if(err)
 		{
 			sys.puts(err);

@@ -7,10 +7,26 @@ var mapper = require('../models/url_mapper');
 
 var url_controller = exports;
 
-url_controller.handleRequest = function(req, res)
+url_controller.handleGetRequest = function(req, res)
+{
+	mapper.getLongUrl(url.parse(req.url).pathname.replace('/',''), 
+		function(longUrl){
+			res.writeHead(200, {'Content-Type' : 'text/html'});
+			res.write(longUrl);
+			res.end();	
+		},
+		function(data){
+			res.writeHead(404, {'Content-Type' : 'text/html'});
+			res.write("Request could not be completed: " + data);
+			res.end();
+		}
+	);
+}
+
+url_controller.handleCreateRequest = function(req, res)
 {
 	query = url.parse(req.url, true).query;
-	if(query['long_url'])
+	try
 	{
 		mapper.setShortUrl(mapper.createShortCode(), query['long_url'],
 			function(code, value){
@@ -25,13 +41,13 @@ url_controller.handleRequest = function(req, res)
 				res.end();
 				
 			}
-		);
+		);		
 	}
-	else
+	catch(err)
 	{
 		//TODO: Choose a more appropriate error code
 		res.writeHead(404, {'Content-Type' : 'text/html'});
-		res.write("Request could not be completed");
-		res.end();
+		res.write("Request could not be completed" + err);
+		res.end();		
 	}
 };

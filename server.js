@@ -25,11 +25,9 @@ function processUrl(req, res)
 			home.handleRequest(req, res);
 			break;
 		case '/create':
-			url_controller.handleRequest(req, res);
+			url_controller.handleCreateRequest(req, res);
 			break;
 		default:
-			res.writeHeader(404, {});
-			res.write("Not Found " + path);
-			res.end();
+			url_controller.handleGetRequest(req, res);
 	}
 }
